@@ -56,13 +56,13 @@ class UserSimilarityRecommender:
 
         self.popularity_recommender = PopularityRecommender()
 
-    def recommend_new_user(self, items):
+    def recommend_new_user(self, items, topn):
         soup = make_soup(items)
         new_row = {"customer_id": "001", "article_id": str(items).replace(",", ""), "soup": soup}
         new_row_df = pd.DataFrame(new_row, index=[0])
         self.df = pd.concat([self.df, new_row_df], ignore_index=True)
         self.ctr = ContentBasedRecommender(article_path="", soup_col=[], title_col="customer_id", is_df=True, df=self.df)
-        recs = self.recommend("001", 5, new=True)
+        recs = self.recommend("001", topn, new=True)
         return recs
 
     def get_topn_similar_users(self, user_id, topn):
