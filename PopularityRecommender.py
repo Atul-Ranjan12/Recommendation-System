@@ -36,4 +36,7 @@ class PopularityRecommender:
         top_n_items = [item[0] for item in self.sorted_count_df[:n]]
         return top_n_items
 
+    def get_count_dict(self):
+        return self.count_dict
+
 

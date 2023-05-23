@@ -18,7 +18,7 @@ columns = ["prod_name",
 
 
 class ContentBasedRecommender:
-    def __init__(self, article_path=articles, soup_col=columns, title_col="article_id"):
+    def __init__(self, article_path=articles, soup_col=columns, title_col="article_id", is_df=False, df=None):
         """
         This class initializes the content based filtering recommendation system.
         It finds similar products in a company's product line and uses distance
@@ -28,7 +28,11 @@ class ContentBasedRecommender:
         :param soup_col: Columns to be included for the similarity metric
         :param title_col: Name of the column containing the articles
         """
-        self.df = pd.read_csv(article_path)
+        if is_df:
+            self.df = df
+        else:
+            self.df = pd.read_csv(article_path)
+
         self.initialize_df(soup_col)
         self.count = TfidfVectorizer(analyzer="word",
                                      ngram_range=(1, 2),
@@ -50,7 +54,9 @@ class ContentBasedRecommender:
         :param cols: Columns to be included in the soup
         :return: Null
         """
-        self.df["soup"] = self.df[cols].apply(lambda row: ''.join(str(cell) for cell in row), axis=1)
+        if "soup" not in self.df:
+            self.df["soup"] = self.df[cols].apply(lambda row: ''.join(str(cell) for cell in row), axis=1)
+        self.df["soup"] = self.df["soup"].fillna("")
 
     def fit(self):
         """
